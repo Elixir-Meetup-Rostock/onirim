@@ -1,8 +1,9 @@
 defmodule State do
-  defstruct draw_pile: %Deck{},
-            discard_pile: %Deck{},
+  defstruct active_card: :unknown,
+            draw_pile: [],
+            discard_pile: [],
             labyrinth: [],
-            limbo_pile: %Deck{},
-            opened_doors: %Deck{},
-            personal_resources: %Deck{}
+            limbo_pile: [],
+            opened_doors: [],
+            personal_resources: []
 end

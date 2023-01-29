@@ -1,28 +1,17 @@
 defmodule Deck do
-  defstruct cards: []
-
   alias Cards.Door
   alias Cards.Dream
   alias Cards.Location
 
-  def add_cards(deck, card, count \\ 1) do
-    cards =
-      1..count
-      |> Enum.reduce(deck.cards, fn _, cards_acc ->
-        [card | cards_acc]
-      end)
-
-    %Deck{
-      cards: cards
-    }
+  def add_cards(cards, card, count \\ 1) do
+    1..count
+    |> Enum.reduce(cards, fn _, cards_acc ->
+      [card | cards_acc]
+    end)
   end
 
-  def empty?(deck) do
-    Enum.empty?(deck.cards)
-  end
-
-  def get_default_deck do
-    %Deck{}
+  def get_default_draw_pile do
+    []
     |> add_cards(Dream.get_nightmare(), 10)
     |> add_cards(Door.get_aquarium_door(), 2)
     |> add_cards(Door.get_garden_door(), 2)
@@ -42,17 +31,8 @@ defmodule Deck do
     |> add_cards(Location.get_observatory_sun(), 9)
   end
 
-  def report do
-  end
-
-  def show(deck) do
-    deck.cards
-    |> Enum.each(fn card -> IO.inspect(card) end)
-  end
-
-  def shuffle(deck) do
-    %Deck{
-      cards: Enum.shuffle(deck.cards)
-    }
+  def show(cards) do
+    cards
+    |> Enum.each(&IO.inspect(&1))
   end
 end
