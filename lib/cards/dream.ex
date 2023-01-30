@@ -1,5 +1,5 @@
 defmodule Cards.Dream do
-  defstruct type: :aquarium
+  defstruct type: :unknown
 
   alias Cards.Dream
 
