@@ -49,12 +49,36 @@ defmodule Deck do
     do: add_cards(draw_pile, Location.new(type, symbol), count)
 
   def get_default_draw_pile do
+<<<<<<< HEAD
     @default_draw_pile_input
     |> get_draw_pile()
+=======
+    []
+    |> add_cards(Dream.get_nightmare(), 10)
+    |> add_cards(Door.new(:aquarium), 2)
+    |> add_cards(Door.new(:garden), 2)
+    |> add_cards(Door.new(:library), 2)
+    |> add_cards(Door.new(:observatory), 2)
+    |> add_cards(Location.get_aquarium_key(), 3)
+    |> add_cards(Location.get_aquarium_moon(), 4)
+    |> add_cards(Location.get_aquarium_sun(), 8)
+    |> add_cards(Location.get_garden_key(), 3)
+    |> add_cards(Location.get_garden_moon(), 4)
+    |> add_cards(Location.get_garden_sun(), 7)
+    |> add_cards(Location.get_library_key(), 3)
+    |> add_cards(Location.get_library_moon(), 4)
+    |> add_cards(Location.get_library_sun(), 6)
+    |> add_cards(Location.get_observatory_key(), 3)
+    |> add_cards(Location.get_observatory_moon(), 4)
+    |> add_cards(Location.get_observatory_sun(), 9)
+>>>>>>> d0d08a36be9edb0a697a7c02ae5009a8f7f93082
   end
 
   def show(cards) do
     cards
     |> Enum.each(&IO.inspect(&1))
   end
+
+
+
 end
