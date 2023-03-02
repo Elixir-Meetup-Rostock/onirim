@@ -1,7 +1,9 @@
 defmodule Cards.Dream do
-  defstruct type: :aquarium
+  defstruct type: :unknown
 
-  alias Cards.Dream
+  @types [:nightmare]
 
-  def get_nightmare, do: %Dream{type: :nightmare}
+  def new(type) when type in @types do
+    %__MODULE__{type: type}
+  end
 end
