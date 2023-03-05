@@ -29,7 +29,7 @@ defmodule DeckTest do
   test "tupel to cards, count check" do
     count =
       {:dream, :nightmare, 10}
-      |> Deck.to_cards([])
+      |> Deck.to_cards()
       |> Enum.count()
 
     assert count == 10
@@ -38,7 +38,7 @@ defmodule DeckTest do
   test "tupel to cards, type check" do
     first =
       {:dream, :nightmare, 10}
-      |> Deck.to_cards([])
+      |> Deck.to_cards()
       |> List.first()
 
     assert first.type == :nightmare
@@ -47,7 +47,7 @@ defmodule DeckTest do
   test "tupel to cards, type and symbol check" do
     first =
       {:location, :aquarium, :key, 10}
-      |> Deck.to_cards([])
+      |> Deck.to_cards()
       |> List.first()
 
     assert first == %Location{type: :aquarium, symbol: :key}
@@ -55,26 +55,18 @@ defmodule DeckTest do
 
   test "get draw pile, type and symbol check" do
     count =
-      [{:dream, :nightmare, 1}]
+      [{:dream, :nightmare, 2}]
       |> Deck.get_draw_pile()
       |> Enum.count()
 
     assert count == 2
   end
 
-  # test "build default draw pile" do
-  #   count =
-  #     Deck.get_default_draw_pile()
-  #     |> IO.inspect()
-  #     |> Enum.count()
+  test "build default draw pile" do
+    count =
+      Deck.get_default_draw_pile()
+      |> Enum.count()
 
-  #   assert count == 76
-  # end
-
-  # test "show cards in pile" do
-  #   Deck.get_default_draw_pile()
-  #   |> Deck.show()
-
-  #   assert true
-  # end
+    assert count == 76
+  end
 end

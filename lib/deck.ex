@@ -3,7 +3,6 @@ defmodule Deck do
   alias Cards.Dream
   alias Cards.Location
 
-  # TODO Liste von Tupeln, Variabler Input
   # TODO Einfachen GameLoop bauen (Win, Loss, UserInput)
   # TODO StateMachine Skizzieren
   # TODO Weitere Funktionen implementieren
@@ -34,19 +33,19 @@ defmodule Deck do
   def add_cards(cards, card, count), do: add_cards([card | cards], card, count - 1)
 
   def get_draw_pile(input) do
-    Enum.map_reduce(input, [], fn item, draw_pile ->
-      to_cards(item, draw_pile)
-    end)
+    input
+    |> Enum.map(&to_cards/1)
+    |> Enum.concat()
   end
 
-  def to_cards({:dream, type, count}, draw_pile),
-    do: add_cards(draw_pile, Dream.new(type), count)
+  def to_cards({:dream, type, count}),
+    do: List.duplicate(Dream.new(type), count)
 
-  def to_cards({:door, type, count}, draw_pile),
-    do: add_cards(draw_pile, Door.new(type), count)
+  def to_cards({:door, type, count}),
+    do: List.duplicate(Door.new(type), count)
 
-  def to_cards({:location, type, symbol, count}, draw_pile),
-    do: add_cards(draw_pile, Location.new(type, symbol), count)
+  def to_cards({:location, type, symbol, count}),
+    do: List.duplicate(Location.new(type, symbol), count)
 
   def get_default_draw_pile do
     @default_draw_pile_input
