@@ -8,25 +8,7 @@ defmodule Deck do
   # TODO Weitere Funktionen implementieren
   # TODO Mehr Tests!
 
-  @default_draw_pile_input [
-    {:dream, :nightmare, 10},
-    {:door, :aquarium, 2},
-    {:door, :garden, 2},
-    {:door, :library, 2},
-    {:door, :observatory, 2},
-    {:location, :aquarium, :key, 3},
-    {:location, :aquarium, :moon, 4},
-    {:location, :aquarium, :sun, 8},
-    {:location, :garden, :key, 3},
-    {:location, :garden, :moon, 4},
-    {:location, :garden, :sun, 7},
-    {:location, :library, :key, 3},
-    {:location, :library, :moon, 4},
-    {:location, :library, :sun, 6},
-    {:location, :observatory, :key, 3},
-    {:location, :observatory, :moon, 4},
-    {:location, :observatory, :sun, 9}
-  ]
+  @default_draw_pile_input Application.compile_env(:onirim, :default_draw_pile)
 
   def add_cards(cards, card, count \\ 1)
   def add_cards(cards, card, 1), do: [card | cards]
@@ -41,11 +23,11 @@ defmodule Deck do
   def to_cards({:dream, type, count}),
     do: List.duplicate(Dream.new(type), count)
 
-  def to_cards({:door, type, count}),
-    do: List.duplicate(Door.new(type), count)
+  def to_cards({:door, suit, count}),
+    do: List.duplicate(Door.new(suit), count)
 
-  def to_cards({:location, type, symbol, count}),
-    do: List.duplicate(Location.new(type, symbol), count)
+  def to_cards({:location, suit, symbol, count}),
+    do: List.duplicate(Location.new(suit, symbol), count)
 
   def get_default_draw_pile do
     @default_draw_pile_input
@@ -54,6 +36,6 @@ defmodule Deck do
 
   def show(cards) do
     cards
-    |> Enum.each(&IO.inspect(&1))
+    |> Enum.each(&IO.inspect/1)
   end
 end

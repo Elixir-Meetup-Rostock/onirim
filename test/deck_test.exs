@@ -50,7 +50,7 @@ defmodule DeckTest do
       |> Deck.to_cards()
       |> List.first()
 
-    assert first == %Location{type: :aquarium, symbol: :key}
+    assert first == %Location{suit: :aquarium, symbol: :key}
   end
 
   test "get draw pile, type and symbol check" do

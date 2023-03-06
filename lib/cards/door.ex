@@ -1,9 +1,9 @@
 defmodule Cards.Door do
-  defstruct type: :unknown
+  defstruct suit: :unknown
 
-  @types [:aquarium, :garden, :library, :observatory]
+  @suits Application.compile_env(:onirim, :suits)
 
-  def new(type) when type in @types do
-    %__MODULE__{type: type}
+  def new(suit) when suit in @suits do
+    %__MODULE__{suit: suit}
   end
 end

@@ -1,10 +1,10 @@
 defmodule Cards.Location do
-  defstruct type: :unknown, symbol: :unkown
+  defstruct suit: :unknown, symbol: :unkown
 
-  @types [:aquarium, :garden, :library, :observatory]
-  @symbols [:key, :moon, :sun]
+  @suits Application.compile_env(:onirim, :suits)
+  @symbols Application.compile_env(:onirim, :symbols)
 
-  def new(type, symbol) when type in @types and symbol in @symbols do
-    %__MODULE__{type: type, symbol: symbol}
+  def new(suit, symbol) when suit in @suits and symbol in @symbols do
+    %__MODULE__{suit: suit, symbol: symbol}
   end
 end
