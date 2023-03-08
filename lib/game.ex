@@ -17,20 +17,6 @@ defmodule Game do
     |> refill_personal_resources()
   end
 
-  def discard_card(state = %State{}, pile, card) do
-    index =
-      state
-      |> Map.get(pile)
-      |> Enum.find_index(&(&1 = card))
-
-    card_pile =
-      state
-      |> Map.get(pile)
-      |> List.delete_at(index)
-
-    Map.put(state, pile, card_pile)
-  end
-
   def discard_personal_resources(state = %State{}) do
     state
     |> Map.put(:draw_pile, state.discard_pile ++ state.personal_resources)
@@ -90,22 +76,5 @@ defmodule Game do
     end)
 
     state
-    |> resolve_limbo()
-  end
-
-  def resolve_limbo(state = %State{}) do
-    if Enum.empty?(state.limbo_pile) do
-      state
-    else
-      state
-      |> Map.put(:draw_pile, (state.draw_pile ++ state.limbo_pile) |> Enum.shuffle())
-      |> Map.put(:limbo_pile, [])
-    end
-  end
-
-  def setup do
-    %State{
-      draw_pile: Deck.get_default_draw_pile() |> Enum.shuffle()
-    }
   end
 end

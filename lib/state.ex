@@ -5,5 +5,7 @@ defmodule State do
             labyrinth: [],
             limbo_pile: [],
             opened_doors: [],
-            personal_resources: []
+            personal_resources: [],
+            phase: :unknown,
+            status: :unknown
 end
