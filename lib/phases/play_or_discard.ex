@@ -1,47 +1,60 @@
 defmodule Phases.PlayOrDiscard do
+  alias Cards.Door
+  alias Cards
   alias Cards.Location
   alias Deck
 
-  def play_card(state = %State{}, card) do
-    state
-    |> add_card(:labyrinth, card)
-    |> remove_card(:personal_resources, card)
-  end
-
   def discard_card(state = %State{}, card = %Location{symbol: :key}) do
-    trigger_prophecy(state, card)
-    remove_card(state, :personal_resources, card)
+    state
+    |> trigger_prophecy(card)
+    |> Cards.move(:personal_resources, :discard_pile, card)
   end
 
   def discard_card(state = %State{}, card = %Location{}) do
-    remove_card(state, :personal_resources, card)
-  end
-
-  def trigger_prophecy(state = %State{}, card) do
-  end
-
-  def add_card(state = %State{}, pile, card) do
-    card_pile =
-      state
-      |> Map.get(pile)
-
     state
-    |> Map.put(pile, Deck.add_cards(card_pile, card))
+    |> Cards.move(:personal_resources, :discard_pile, card)
   end
 
-  def remove_card(state = %State{}, pile, card) do
-    index =
-      state
-      |> Map.get(pile)
-      |> Enum.find_index(&(&1 = card))
-
-    card_pile =
-      state
-      |> Map.get(pile)
-      |> List.delete_at(index)
-
+  def open_door(state = %State{}, suit) do
     state
-    |> Map.put(:discard_pile, Deck.add_cards(state.discard_pile, card))
-    |> Map.put(pile, card_pile)
+    |> Cards.move(:draw_pile, :opened_doors, Door.new(suit))
+    |> Cards.shuffle(:draw_pile)
+  end
+
+  def open_door?(state = %State{labyrinth: labyrinth}) do
+    last_three_cards =
+      labyrinth
+      |> Enum.take(3)
+
+    if last_three_cards |> Enum.count() == 3 do
+      suit =
+        last_three_cards
+        |> List.first()
+        |> Map.get(:suit)
+
+      if last_three_cards |> Enum.all?(&(&1.suit == suit)) do
+        {state, true, suit}
+      else
+        {state, false, nil}
+      end
+    else
+      {state, false, nil}
+    end
+  end
+
+  # TODO Check ob die gewählte Karte gelegt werden darf
+  def play_card(state = %State{}, card = %Location{}) do
+    state
+    |> Cards.move(:personal_resources, :labyrinth, card)
+    |> open_door?()
+    |> case do
+      {state, true, suit} -> open_door(state, suit)
+      {state, _, _} -> state
+    end
+  end
+
+  def trigger_prophecy(state = %State{}, _card) do
+    IO.puts("Trigger Prophecy is not implemented")
+    state
   end
 end
