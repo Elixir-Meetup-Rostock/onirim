@@ -6,6 +6,7 @@ defmodule State do
             opened_doors: [],
             personal_resources: [],
             phase: :unknown,
+            prophecy_pile: [],
             status: :unknown,
             drawn_card: nil
 end

@@ -1,12 +1,11 @@
 defmodule Phases.PlayOrDiscard do
-  alias Cards.Door
   alias Cards
+  alias Cards.Door
   alias Cards.Location
-  alias Deck
 
   def discard_card(state = %State{}, card = %Location{symbol: :key}) do
     state
-    |> trigger_prophecy(card)
+    |> trigger_prophecy
     |> Cards.move(:personal_resources, :discard_pile, card)
   end
 
@@ -42,19 +41,58 @@ defmodule Phases.PlayOrDiscard do
     end
   end
 
-  # TODO Check ob die gewählte Karte gelegt werden darf
-  def play_card(state = %State{}, card = %Location{}) do
-    state
-    |> Cards.move(:personal_resources, :labyrinth, card)
-    |> open_door?()
+  def play_card?(state = %State{}, card = %Location{}) do
+    state.labyrinth
+    |> List.first()
     |> case do
-      {state, true, suit} -> open_door(state, suit)
-      {state, _, _} -> state
+      nil -> true
+      last_location -> last_location.suit != card.suit
     end
   end
 
-  def trigger_prophecy(state = %State{}, _card) do
-    IO.puts("Trigger Prophecy is not implemented")
+  def play_card(state = %State{}, card = %Location{}) do
     state
+    |> play_card?(card)
+    |> if do
+      state
+      |> Cards.move(:personal_resources, :labyrinth, card)
+      |> open_door?()
+      |> case do
+        {state, true, suit} -> open_door(state, suit)
+        {state, _, _} -> state
+      end
+    else
+      state
+    end
+  end
+
+  def trigger_prophecy(state = %State{}) do
+    top_five_cards =
+      state.draw_pile
+      |> Enum.take(5)
+
+    state
+    |> Map.put(:prophecy_pile, top_five_cards)
+  end
+
+  def remove_prophecy_card(state = %State{}, card) do
+    state.prophecy_pile
+    |> Enum.member?(card)
+    |> if do
+      new_prophecy_pile = state.prophecy_pile |> List.delete(card)
+      Map.put(state, :prophecy_pile, new_prophecy_pile)
+    else
+      state
+    end
+  end
+
+  def sort_prophecy_pile(state = %State{}, cards) do
+    Map.put(state, :prophecy_pile, cards)
+  end
+
+  def resolve_prophecy(state = %State{}) do
+    new_draw_pile = Enum.concat(state.prophecy_pile, state.draw_pile)
+
+    Map.put(state, :draw_pile, new_draw_pile)
   end
 end

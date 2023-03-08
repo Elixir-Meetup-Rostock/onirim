@@ -35,11 +35,9 @@ defmodule Phases.RefillHand do
       end
     end)
 
-    # TODO GAME_OVER condition if counter < 5
     state
   end
 
-  # TODO Refactor draw_card + Tests
   def draw_card(state = %State{}) do
     drawn_card = state.draw_pile |> List.first()
 
