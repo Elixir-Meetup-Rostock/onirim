@@ -3,10 +3,6 @@ defmodule Onirim do
   alias Game
   alias Cards.Location
 
-  def hello do
-    :world
-  end
-
   # TODO Game Loop vervollständigen
   def loop do
     handle_init()

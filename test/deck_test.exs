@@ -63,7 +63,6 @@ defmodule DeckTest do
     assert count == 2
   end
 
-  # TODO Warum ist der generierte Count unregelmäßig?
   test "build default draw pile" do
     count =
       Setup.get_default_draw_pile()
