@@ -81,7 +81,7 @@ defmodule Phases.RefillHand do
     |> Cards.move_drawn_card(:discard_pile)
   end
 
-  def resolve_nightmare_with_top_five_Cards(state = %State{drawn_card: %Dream{type: :nightmare}}) do
+  def resolve_nightmare_with_top_five_cards(state = %State{drawn_card: %Dream{type: :nightmare}}) do
     {final_state, _} =
       state.draw_pile
       |> Enum.reduce_while({state, 0}, fn card, {current_state, counter} ->
@@ -101,6 +101,14 @@ defmodule Phases.RefillHand do
       end)
 
     final_state
+  end
+
+  def resolve_nightmare_with_personal_resources(
+        state = %State{drawn_card: %Dream{type: :nightmare}}
+      ) do
+    state
+    |> Cards.move(:personal_resources, :discard_pile)
+    |> refill_personal_resources()
   end
 
   def refill_personal_resources(state = %State{}) do

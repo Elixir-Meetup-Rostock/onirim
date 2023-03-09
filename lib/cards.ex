@@ -16,6 +16,14 @@ defmodule Cards do
     |> is_integer()
   end
 
+  def move(state = %State{}, from_pile, to_pile) do
+    new_to_pile = Map.get(state, from_pile) ++ Map.get(state, to_pile)
+
+    state
+    |> Map.put(to_pile, new_to_pile)
+    |> Map.put(from_pile, [])
+  end
+
   def move(state = %State{}, from_pile, to_pile, card) do
     state
     |> remove(from_pile, card)
