@@ -1,5 +1,9 @@
 defmodule Phases.RefillHand do
+  alias Cards.Door
+  alias Cards.Dream
   alias Cards.Location
+
+  @personal_ressources_limit Application.compile_env(:onirim, :personal_ressources_limit)
 
   def discard_and_refill_personal_resources(state = %State{}) do
     state
@@ -10,30 +14,6 @@ defmodule Phases.RefillHand do
   def discard_personal_resources(state = %State{}) do
     state.personal_resources
     |> Enum.map(&Cards.move(state, :personal_resources, :discard_pile, &1))
-
-    state
-  end
-
-  # TODO Refactor discard_top_five_cards_from_draw_pile + Tests
-  def discard_top_five_cards_from_draw_pile(state = %State{}) do
-    state.draw_pile
-    |> Enum.reduce_while({state, 0}, fn card, {state, counter} ->
-      if counter < 5 do
-        state = Map.put(state, :draw_pile, state.draw_pile |> tl())
-
-        case card do
-          %Location{} ->
-            state = Map.put(state, :discard_pile, [card, state.discard_pile])
-            {:cont, {state, counter + 1}}
-
-          _ ->
-            Map.put(state, :limbo_pile, [card, state.limbo_pile])
-            {:cont, {state, counter}}
-        end
-      else
-        {:halt, {state, counter}}
-      end
-    end)
 
     state
   end
@@ -83,30 +63,58 @@ defmodule Phases.RefillHand do
     end
   end
 
-  # TODO Implement full Handling
-  def resolve_drawn_dream(state = %State{}) do
+  def resolve_nightmare_with_key(
+        state = %State{drawn_card: %Dream{type: :nightmare}},
+        key = %Location{symbol: :key}
+      ) do
     state
-    |> Cards.add(:limbo_pile, state.drawn_card)
-    |> draw_card()
+    |> Cards.move(:personal_resources, :discard_pile, key)
+    |> Cards.move_drawn_card(:discard_pile)
   end
 
-  def peek_card(state = %State{}) do
-    state.draw_pile |> List.first()
+  def resolve_nightmare_with_door(
+        state = %State{drawn_card: %Dream{type: :nightmare}},
+        door = %Door{}
+      ) do
+    state
+    |> Cards.move(:opened_doors, :limbo_pile, door)
+    |> Cards.move_drawn_card(:discard_pile)
   end
 
-  # TODO Tests
+  def resolve_nightmare_with_top_five_Cards(state = %State{drawn_card: %Dream{type: :nightmare}}) do
+    {final_state, _} =
+      state.draw_pile
+      |> Enum.reduce_while({state, 0}, fn card, {current_state, counter} ->
+        if counter < 5 do
+          case card do
+            %Location{} ->
+              new_state = Cards.move_top_card(current_state, :draw_pile, :discard_pile)
+              {:cont, {new_state, counter + 1}}
+
+            _ ->
+              new_state = Cards.move_top_card(current_state, :draw_pile, :limbo_pile)
+              {:cont, {new_state, counter + 1}}
+          end
+        else
+          {:halt, {current_state, counter}}
+        end
+      end)
+
+    final_state
+  end
+
   def refill_personal_resources(state = %State{}) do
     state.draw_pile
     |> Enum.reduce_while(state, fn card, state ->
-      if Enum.count(state.personal_resources) < 5 do
+      if Enum.count(state.personal_resources) < @personal_ressources_limit do
         case card do
           %Location{} ->
-            state = Cards.add(state, :personal_resources, card)
-            {:cont, state}
+            new_state = Cards.move_top_card(state, :draw_pile, :personal_resources)
+            {:cont, new_state}
 
           _ ->
-            state = Cards.add(state, :limbo_pile, card)
-            {:cont, state}
+            new_state = Cards.move_top_card(state, :draw_pile, :limbo_pile)
+            {:cont, new_state}
         end
       else
         {:halt, state}

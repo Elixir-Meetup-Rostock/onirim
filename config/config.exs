@@ -6,6 +6,7 @@ config :onirim,
   suits: [:aquarium, :garden, :library, :observatory],
   status: [:victory, :defeat, :active],
   symbols: [:key, :moon, :sun],
+  personal_ressources_limit: 5,
   default_draw_pile: [
     {:dream, :nightmare, 10},
     {:door, :aquarium, 2},

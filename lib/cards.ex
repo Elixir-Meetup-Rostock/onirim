@@ -22,6 +22,12 @@ defmodule Cards do
     |> add(to_pile, card)
   end
 
+  def move_drawn_card(state = %State{}, to_pile) do
+    state
+    |> add(to_pile, state.drawn_card)
+    |> Map.put(:drawn_card, nil)
+  end
+
   def remove(state = %State{}, pile, card) do
     index =
       state
@@ -35,6 +41,18 @@ defmodule Cards do
 
     state
     |> Map.put(pile, card_pile)
+  end
+
+  def move_top_card(state = %State{}, from_pile, to_pile) do
+    card_pile = Map.get(state, from_pile)
+
+    top_card =
+      card_pile
+      |> List.first()
+
+    state
+    |> Cards.add(to_pile, top_card)
+    |> Map.put(from_pile, card_pile |> tl())
   end
 
   def shuffle(state = %State{}, pile) do
