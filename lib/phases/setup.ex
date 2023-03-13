@@ -7,10 +7,11 @@ defmodule Phases.Setup do
 
   def default_setup do
     %State{
-      draw_pile: get_default_draw_pile() |> Enum.shuffle(),
+      draw_pile: get_default_draw_pile(),
       phase: :play_or_discard,
       status: :active
     }
+    |> Cards.shuffle(:draw_pile)
     |> Phases.RefillHand.refill_personal_resources()
     |> Phases.ShuffleLimbo.resolve_limbo()
   end

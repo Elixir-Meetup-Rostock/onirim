@@ -1,7 +1,24 @@
 defmodule Onirim do
   # TODO Game Loop vervollständigen
+  alias Phases.Setup
+
   def loop do
-    :ok
+    Setup.default_setup()
+    |> loop()
+  end
+
+  def loop(state = %State{}) do
+    state
+  end
+
+  def loop(state = %State{status: :quit}) do
+    state
+    |> handle_actions()
+  end
+
+  def handle_actions(state = %State{}) do
+    # TODO
+    state
   end
 
   def victory?(state = %State{}) do

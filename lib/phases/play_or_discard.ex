@@ -14,55 +14,44 @@ defmodule Phases.PlayOrDiscard do
     |> Cards.move(:personal_resources, :discard_pile, card)
   end
 
-  def open_door(state = %State{}, suit) do
+  def open_door(state = %State{}, %Door{} = door) do
     state
-    |> Cards.move(:draw_pile, :opened_doors, Door.new(suit))
+    |> Cards.move(:draw_pile, :opened_doors, door)
     |> Cards.shuffle(:draw_pile)
   end
 
+  def three_cards?(labyrinth) when length(labyrinth) >= 3, do: true
+  def three_cards?(_labyrinth), do: false
+
+  def three_same_suits?(labyrinth, suit) do
+    labyrinth
+    |> Enum.take(3)
+    |> Enum.all?(&(&1.suit == suit))
+  end
+
   def open_door?(state = %State{labyrinth: labyrinth}) do
-    last_three_cards =
+    suit =
       labyrinth
-      |> Enum.take(3)
+      |> List.first()
+      |> Map.get(:suit)
 
-    if last_three_cards |> Enum.count() == 3 do
-      suit =
-        last_three_cards
-        |> List.first()
-        |> Map.get(:suit)
-
-      if last_three_cards |> Enum.all?(&(&1.suit == suit)) do
-        {state, true, suit}
-      else
-        {state, false, nil}
-      end
+    if three_cards?(labyrinth) and three_same_suits?(labyrinth, suit) do
+      {state, true, %Door{suit: suit}}
     else
       {state, false, nil}
     end
   end
 
-  def play_card?(state = %State{}, card = %Location{}) do
-    state.labyrinth
-    |> List.first()
-    |> case do
-      nil -> true
-      last_location -> last_location.suit != card.suit
-    end
-  end
+  def play_card(state = %State{labyrinth: [%{symbol: s1}]}, %Location{symbol: s2}) when s1 == s2,
+    do: state
 
   def play_card(state = %State{}, card = %Location{}) do
     state
-    |> play_card?(card)
-    |> if do
-      state
-      |> Cards.move(:personal_resources, :labyrinth, card)
-      |> open_door?()
-      |> case do
-        {state, true, suit} -> open_door(state, suit)
-        {state, _, _} -> state
-      end
-    else
-      state
+    |> Cards.move(:personal_resources, :labyrinth, card)
+    |> open_door?()
+    |> case do
+      {state, true, suit} -> open_door(state, suit)
+      {state, _, _} -> state
     end
   end
 

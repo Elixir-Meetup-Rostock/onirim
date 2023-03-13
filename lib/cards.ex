@@ -3,6 +3,9 @@ defmodule Cards do
   alias Cards.Dream
   alias Cards.Location
 
+  # TODO Map.update anstatt Map.put
+  # TODO %State{} = state
+
   def add_cards(cards, card, count \\ 1)
   def add_cards(cards, card, 1), do: [card | cards]
   def add_cards(cards, card, count), do: add_cards([card | cards], card, count - 1)
@@ -67,12 +70,8 @@ defmodule Cards do
     |> Map.put(from_pile, card_pile |> tl())
   end
 
-  def shuffle(state = %State{}, pile) do
-    shuffled_pile =
-      Map.get(state, pile)
-      |> Enum.shuffle()
-
-    Map.put(state, pile, shuffled_pile)
+  def shuffle(%State{} = state, pile) do
+    Map.update!(state, pile, &Enum.shuffle/1)
   end
 
   def location?(%Location{}), do: true

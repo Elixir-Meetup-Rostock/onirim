@@ -16,4 +16,20 @@ defmodule CardsTest do
   test "Create location card (aquarium key)" do
     assert Cards.Location.new(:aquarium, :key) == %Location{suit: :aquarium, symbol: :key}
   end
+
+  # TODO Weniger Heisentestig
+  test "Shuffle pile" do
+    state = Phases.Setup.default_setup()
+
+    pile_a =
+      state
+      |> Map.get(:personal_resources)
+
+    pile_b =
+      state
+      |> Cards.shuffle(:personal_resources)
+      |> Map.get(:personal_resources)
+
+    refute pile_a == pile_b
+  end
 end
