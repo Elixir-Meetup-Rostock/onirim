@@ -1,4 +1,8 @@
 defmodule Cards do
+  alias Cards.Door
+  alias Cards.Dream
+  alias Cards.Location
+
   def add_cards(cards, card, count \\ 1)
   def add_cards(cards, card, 1), do: [card | cards]
   def add_cards(cards, card, count), do: add_cards([card | cards], card, count - 1)
@@ -70,4 +74,13 @@ defmodule Cards do
 
     Map.put(state, pile, shuffled_pile)
   end
+
+  def location?(%Location{}), do: true
+  def location?(_), do: false
+
+  def dream?(%Dream{}), do: true
+  def dream?(_), do: false
+
+  def door?(%Door{}), do: true
+  def door?(_), do: false
 end
