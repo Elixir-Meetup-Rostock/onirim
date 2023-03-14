@@ -10,20 +10,20 @@ defmodule Cards do
   def add_cards(cards, card, 1), do: [card | cards]
   def add_cards(cards, card, count), do: add_cards([card | cards], card, count - 1)
 
-  def add(state = %State{}, pile, card) do
+  def add(%State{} = state, pile, card) do
     card_pile = [card | state |> Map.get(pile)]
 
     Map.put(state, pile, card_pile)
   end
 
-  def has(state = %State{}, pile, card) do
+  def has(%State{} = state, pile, card) do
     state
     |> Map.get(pile)
     |> Enum.find_index(&(&1 = card))
     |> is_integer()
   end
 
-  def move(state = %State{}, from_pile, to_pile) do
+  def move(%State{} = state, from_pile, to_pile) do
     new_to_pile = Map.get(state, from_pile) ++ Map.get(state, to_pile)
 
     state

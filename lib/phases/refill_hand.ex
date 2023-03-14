@@ -5,20 +5,20 @@ defmodule Phases.RefillHand do
 
   @personal_ressources_limit Application.compile_env(:onirim, :personal_ressources_limit)
 
-  def discard_and_refill_personal_resources(state = %State{}) do
+  def discard_and_refill_personal_resources(%State{} = state) do
     state
     |> discard_personal_resources()
     |> refill_personal_resources()
   end
 
-  def discard_personal_resources(state = %State{}) do
+  def discard_personal_resources(%State{} = state) do
     state.personal_resources
     |> Enum.map(&Cards.move(state, :personal_resources, :discard_pile, &1))
 
     state
   end
 
-  def draw_card(state = %State{}) do
+  def draw_card(%State{} = state) do
     drawn_card = state.draw_pile |> List.first()
 
     state
@@ -26,19 +26,19 @@ defmodule Phases.RefillHand do
     |> Cards.remove(:draw_pile, drawn_card)
   end
 
-  def resolve_drawn_location(state = %State{}) do
+  def resolve_drawn_location(%State{} = state) do
     state
     |> Cards.add(:personal_resources, state.drawn_card)
     |> Map.put(:drawn_card, nil)
   end
 
-  def resolve_drawn_door(state = %State{}) do
+  def resolve_drawn_door(%State{} = state) do
     state
     |> Cards.add(:limbo_pile, state.drawn_card)
     |> draw_card()
   end
 
-  def open_drawn_door?(state = %State{}) do
+  def open_drawn_door?(%State{} = state) do
     key_card = Location.new(state.drawn_card.suit, :key)
 
     has_key_card =
@@ -48,7 +48,7 @@ defmodule Phases.RefillHand do
     {has_key_card, key_card}
   end
 
-  def open_drawn_door(state = %State{}) do
+  def open_drawn_door(%State{} = state) do
     state
     |> open_drawn_door?
     |> case do
@@ -64,8 +64,8 @@ defmodule Phases.RefillHand do
   end
 
   def resolve_nightmare_with_key(
-        state = %State{drawn_card: %Dream{type: :nightmare}},
-        key = %Location{symbol: :key}
+        %State{drawn_card: %Dream{type: :nightmare}} = state,
+        %Location{symbol: :key} = key
       ) do
     state
     |> Cards.move(:personal_resources, :discard_pile, key)
@@ -73,15 +73,15 @@ defmodule Phases.RefillHand do
   end
 
   def resolve_nightmare_with_door(
-        state = %State{drawn_card: %Dream{type: :nightmare}},
-        door = %Door{}
+        %State{drawn_card: %Dream{type: :nightmare}} = state,
+        %Door{} = door
       ) do
     state
     |> Cards.move(:opened_doors, :limbo_pile, door)
     |> Cards.move_drawn_card(:discard_pile)
   end
 
-  def resolve_nightmare_with_top_five_cards(state = %State{drawn_card: %Dream{type: :nightmare}}) do
+  def resolve_nightmare_with_top_five_cards(%State{drawn_card: %Dream{type: :nightmare}} = state) do
     {final_state, _} =
       state.draw_pile
       |> Enum.reduce_while({state, 0}, fn card, {current_state, counter} ->
@@ -104,14 +104,14 @@ defmodule Phases.RefillHand do
   end
 
   def resolve_nightmare_with_personal_resources(
-        state = %State{drawn_card: %Dream{type: :nightmare}}
+        %State{drawn_card: %Dream{type: :nightmare}} = state
       ) do
     state
     |> Cards.move(:personal_resources, :discard_pile)
     |> refill_personal_resources()
   end
 
-  def refill_personal_resources(state = %State{}) do
+  def refill_personal_resources(%State{} = state) do
     state.draw_pile
     |> Enum.reduce_while(state, fn card, state ->
       if Enum.count(state.personal_resources) < @personal_ressources_limit do
