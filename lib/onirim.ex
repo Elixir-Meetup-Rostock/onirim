@@ -7,7 +7,7 @@ defmodule Onirim do
     |> loop()
   end
 
-  def loop(state = %State{}) do
+  def loop(%State{} = state) do
     state
   end
 
@@ -16,12 +16,12 @@ defmodule Onirim do
     |> handle_actions()
   end
 
-  def handle_actions(state = %State{}) do
+  def handle_actions(%State{} = state) do
     # TODO
     state
   end
 
-  def victory?(state = %State{}) do
+  def victory?(%State{} = state) do
     if Enum.count(state.opened_doors) === 2 do
       Map.put(state, :status, :victory)
     else
@@ -29,7 +29,7 @@ defmodule Onirim do
     end
   end
 
-  def defeat?(state = %State{}) do
+  def defeat?(%State{} = state) do
     personal_resources_count = Enum.count(state.personal_resources)
 
     remaining_locations_count =

@@ -31,19 +31,19 @@ defmodule Cards do
     |> Map.put(from_pile, [])
   end
 
-  def move(state = %State{}, from_pile, to_pile, card) do
+  def move(%State{} = state, from_pile, to_pile, card) do
     state
     |> remove(from_pile, card)
     |> add(to_pile, card)
   end
 
-  def move_drawn_card(state = %State{}, to_pile) do
+  def move_drawn_card(%State{} = state, to_pile) do
     state
     |> add(to_pile, state.drawn_card)
     |> Map.put(:drawn_card, nil)
   end
 
-  def remove(state = %State{}, pile, card) do
+  def remove(%State{} = state, pile, card) do
     index =
       state
       |> Map.get(pile)
@@ -58,7 +58,7 @@ defmodule Cards do
     |> Map.put(pile, card_pile)
   end
 
-  def move_top_card(state = %State{}, from_pile, to_pile) do
+  def move_top_card(%State{} = state, from_pile, to_pile) do
     card_pile = Map.get(state, from_pile)
 
     top_card =

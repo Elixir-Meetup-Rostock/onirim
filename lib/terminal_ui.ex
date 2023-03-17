@@ -19,7 +19,7 @@ defmodule TerminalUi do
     end
   end
 
-  def handle_play_or_discard(state = %State{}) do
+  def handle_play_or_discard(%State{} = state) do
     Prompt.select("Choose an action", [
       {"Play a card", :play},
       {"Discard a card", :discard}
@@ -38,7 +38,7 @@ defmodule TerminalUi do
     "#{suit} #{symbol}"
   end
 
-  def handle_play_card(state = %State{}) do
+  def handle_play_card(%State{} = state) do
     cards_for_prompt =
       state.personal_resources
       |> Enum.with_index()

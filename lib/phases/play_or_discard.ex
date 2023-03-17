@@ -56,7 +56,7 @@ defmodule Phases.PlayOrDiscard do
     end
   end
 
-  def trigger_prophecy(state = %State{}) do
+  def trigger_prophecy(%State{} = state) do
     top_five_cards =
       state.draw_pile
       |> Enum.take(5)
