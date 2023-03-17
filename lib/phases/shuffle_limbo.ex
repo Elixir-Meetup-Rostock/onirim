@@ -1,5 +1,5 @@
 defmodule Phases.ShuffleLimbo do
-  def resolve_limbo(state = %State{}) do
+  def resolve_limbo(%State{} = state) do
     if Enum.empty?(state.limbo_pile) do
       state
     else

@@ -23,12 +23,12 @@ defmodule CardsTest do
 
     pile_a =
       state
-      |> Map.get(:personal_resources)
+      |> Map.get(:draw_pile)
 
     pile_b =
       state
-      |> Cards.shuffle(:personal_resources)
-      |> Map.get(:personal_resources)
+      |> Cards.shuffle(:draw_pile)
+      |> Map.get(:draw_pile)
 
     refute pile_a == pile_b
   end
