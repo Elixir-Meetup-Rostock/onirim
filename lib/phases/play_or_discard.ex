@@ -56,20 +56,15 @@ defmodule Phases.PlayOrDiscard do
   end
 
   def trigger_prophecy(state = %State{}) do
-    top_five_cards =
-      state.draw_pile
-      |> Enum.take(5)
-
     state
-    |> Map.put(:prophecy_pile, top_five_cards)
+    |> Map.put(:prophecy_pile, state.draw_pile |> Enum.take(5))
   end
 
   def remove_prophecy_card(state = %State{}, card) do
     state.prophecy_pile
     |> Enum.member?(card)
     |> if do
-      new_prophecy_pile = state.prophecy_pile |> List.delete(card)
-      Map.put(state, :prophecy_pile, new_prophecy_pile)
+      Map.update!(state, :prophecy_pile, &List.delete(&1, card))
     else
       state
     end
@@ -80,8 +75,6 @@ defmodule Phases.PlayOrDiscard do
   end
 
   def resolve_prophecy(state = %State{}) do
-    new_draw_pile = Enum.concat(state.prophecy_pile, state.draw_pile)
-
-    Map.put(state, :draw_pile, new_draw_pile)
+    Map.update!(state, :draw_pile, &Enum.concat(state.prophecy_pile, &1))
   end
 end
