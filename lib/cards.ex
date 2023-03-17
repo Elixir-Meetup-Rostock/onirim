@@ -4,7 +4,6 @@ defmodule Cards do
   alias Cards.Location
 
   # TODO Map.update anstatt Map.put
-  # TODO %State{} = state
 
   def add_cards(cards, card, count \\ 1)
   def add_cards(cards, card, 1), do: [card | cards]
