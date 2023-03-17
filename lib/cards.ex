@@ -10,23 +10,18 @@ defmodule Cards do
   def add_cards(cards, card, count), do: add_cards([card | cards], card, count - 1)
 
   def add(%State{} = state, pile, card) do
-    card_pile = [card | state |> Map.get(pile)]
-
-    Map.put(state, pile, card_pile)
+    Map.update!(state, pile, &[card | &1])
   end
 
   def has(%State{} = state, pile, card) do
     state
     |> Map.get(pile)
-    |> Enum.find_index(&(&1 = card))
-    |> is_integer()
+    |> Enum.member?(card)
   end
 
   def move(%State{} = state, from_pile, to_pile) do
-    new_to_pile = Map.get(state, from_pile) ++ Map.get(state, to_pile)
-
     state
-    |> Map.put(to_pile, new_to_pile)
+    |> Map.update!(to_pile, &(Map.get(state, from_pile) ++ &1))
     |> Map.put(from_pile, [])
   end
 
@@ -43,18 +38,7 @@ defmodule Cards do
   end
 
   def remove(%State{} = state, pile, card) do
-    index =
-      state
-      |> Map.get(pile)
-      |> Enum.find_index(&(&1 = card))
-
-    card_pile =
-      state
-      |> Map.get(pile)
-      |> List.delete_at(index)
-
-    state
-    |> Map.put(pile, card_pile)
+    Map.update!(state, pile, &List.delete(&1, card))
   end
 
   def move_top_card(%State{} = state, from_pile, to_pile) do

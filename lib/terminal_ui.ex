@@ -1,56 +1,55 @@
 defmodule TerminalUi do
+  alias Cards.Door
+  alias Cards.Dream
   alias Cards.Location
-  alias Phases.PlayOrDiscard
-  alias Phases.Setup
   alias Prompt
   alias State
 
-  def run do
-    Prompt.display("Welcome to onirim!")
+  # @info_actions [
+  #   {"Show personal resources", :personal_resources},
+  #   {"Show discard pile", :discard_pile},
+  #   {"Show limbo pile", :limbo_pile},
+  #   {"Show labyrinth", :labyrinth},
+  #   {"Show draw pile", :draw_pile},
+  #   {"Show state", :state}
+  # ]
 
-    Prompt.confirm("Do you want to start the default setup?")
-    |> case do
-      :yes ->
-        Setup.default_setup()
-        |> handle_play_or_discard()
+  # def basic_actions(%State{} = state) do
+  #   next_action = get_next_actions(state)
 
-      _ ->
-        Prompt.display("Bye!")
-    end
+  #   Prompt.select("Choose an action", @info_actions ++ next_action)
+  #   |> case do
+  #     :state ->
+  #       state
+  #       |> IO.inspect(label: "State: ")
+
+  #     cards_key ->
+  #       state
+  #       |> Map.get(cards_key)
+  #       |> display_cards()
+  #   end
+
+  #   state
+  # end
+
+  def handle_phases(%State{phase: :play_or_discard} = state),
+    do: state |> TerminalUi.PlayOrDiscard.start()
+
+  def handle_phases(%State{phase: :refill_hand} = state),
+    do: state |> TerminalUi.RefillHand.start()
+
+  def handle_phases(%State{phase: :shuffle_limbo} = state),
+    do: state |> TerminalUi.ShuffleLimbo.start()
+
+  def display_cards(cards) do
+    cards
+    |> Enum.map(&display_card/1)
+    |> Prompt.display()
   end
 
-  def handle_play_or_discard(%State{} = state) do
-    Prompt.select("Choose an action", [
-      {"Play a card", :play},
-      {"Discard a card", :discard}
-    ])
-    |> case do
-      :play ->
-        state
-        |> handle_play_card()
+  def display_card(%Location{suit: suit, symbol: symbol}), do: "Location - #{suit} #{symbol}"
 
-      :discard ->
-        state
-    end
-  end
+  def display_card(%Dream{type: type}), do: "Dream - #{type}"
 
-  def get_location_label(%Location{suit: suit, symbol: symbol}) do
-    "#{suit} #{symbol}"
-  end
-
-  def handle_play_card(%State{} = state) do
-    cards_for_prompt =
-      state.personal_resources
-      |> Enum.with_index()
-      |> Enum.map(fn {card, index} -> {get_location_label(card), index} end)
-
-    index = Prompt.select("Choose a card", cards_for_prompt)
-
-    card =
-      state.personal_resources
-      |> Enum.at(index)
-
-    state
-    |> PlayOrDiscard.play_card(card)
-  end
+  def display_card(%Door{suit: suit}), do: "Door - #{suit}"
 end

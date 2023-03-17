@@ -9,20 +9,22 @@ defmodule Onirim do
 
   def loop(%State{} = state) do
     state
+    |> handle_actions()
+    |> victory?()
+    |> defeat?()
+    |> loop()
   end
 
-  def loop(state = %State{status: :quit}) do
-    state
-    |> handle_actions()
-  end
+  def loop(%State{status: :quit}), do: :noop
 
   def handle_actions(%State{} = state) do
-    # TODO
     state
+    # |> TerminalUi.basic_actions()
+    |> TerminalUi.handle_phases()
   end
 
   def victory?(%State{} = state) do
-    if Enum.count(state.opened_doors) === 2 do
+    if Enum.count(state.opened_doors) === 8 do
       Map.put(state, :status, :victory)
     else
       state

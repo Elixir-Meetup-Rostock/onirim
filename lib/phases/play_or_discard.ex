@@ -5,19 +5,22 @@ defmodule Phases.PlayOrDiscard do
 
   def discard_card(%State{} = state, %Location{symbol: :key} = card) do
     state
-    |> trigger_prophecy
     |> Cards.move(:personal_resources, :discard_pile, card)
+    |> Map.put(:prophecy_pile, state.draw_pile |> Enum.take(5))
+    |> State.set_phase(:play_or_discard, :choose_card_to_remove)
   end
 
   def discard_card(%State{} = state, %Location{} = card) do
     state
     |> Cards.move(:personal_resources, :discard_pile, card)
+    |> State.set_phase(:refill_hand, :draw)
   end
 
   def open_door(%State{} = state, %Door{} = door) do
     state
     |> Cards.move(:draw_pile, :opened_doors, door)
     |> Cards.shuffle(:draw_pile)
+    |> State.set_phase(:refill_hand, :draw)
   end
 
   def three_cards?(labyrinth) when length(labyrinth) >= 3, do: true
@@ -54,32 +57,18 @@ defmodule Phases.PlayOrDiscard do
       {state, true, suit} -> open_door(state, suit)
       {state, _, _} -> state
     end
-  end
-
-  def trigger_prophecy(%State{} = state) do
-    top_five_cards =
-      state.draw_pile
-      |> Enum.take(5)
-
-    state
-    |> Map.put(:prophecy_pile, state.draw_pile |> Enum.take(5))
+    |> State.set_phase(:refill_hand, :draw)
   end
 
   def remove_prophecy_card(%State{} = state, card) do
-    state.prophecy_pile
-    |> Enum.member?(card)
-    |> if do
-      Map.update!(state, :prophecy_pile, &List.delete(&1, card))
-    else
-      state
-    end
-  end
-
-  def sort_prophecy_pile(%State{} = state, cards) do
-    Map.put(state, :prophecy_pile, cards)
+    state
+    |> Map.update!(:prophecy_pile, &List.delete(&1, card))
+    |> State.set_phase(:refill_hand, :choose_new_order)
   end
 
   def resolve_prophecy(%State{} = state) do
-    Map.update!(state, :draw_pile, &Enum.concat(state.prophecy_pile, &1))
+    state
+    |> Cards.move(:prophecy_pile_new, :draw_pile)
+    |> State.set_phase(:refill_hand, :draw)
   end
 end

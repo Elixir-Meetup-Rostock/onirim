@@ -7,6 +7,6 @@ defmodule Phases.ShuffleLimbo do
       |> Map.put(:draw_pile, (state.draw_pile ++ state.limbo_pile) |> Enum.shuffle())
       |> Map.put(:limbo_pile, [])
     end
-    |> Map.put(:phase, :play_or_discard)
+    |> State.set_phase(:play_or_discard, :start)
   end
 end

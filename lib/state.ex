@@ -1,12 +1,20 @@
 defmodule State do
   defstruct draw_pile: [],
             discard_pile: [],
+            drawn_card: nil,
             labyrinth: [],
             limbo_pile: [],
             opened_doors: [],
             personal_resources: [],
             phase: :unknown,
+            sub_phase: :unknown,
             prophecy_pile: [],
-            status: :unknown,
-            drawn_card: nil
+            prophecy_pile_new: [],
+            status: :unknown
+
+  def set_phase(%State{} = state, phase, sub_phase) do
+    state
+    |> Map.put(:phase, phase)
+    |> Map.put(:sub_phase, sub_phase)
+  end
 end
