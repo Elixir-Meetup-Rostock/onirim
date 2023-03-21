@@ -23,7 +23,7 @@ defmodule TerminalUi.PlayOrDiscard do
     card =
       state
       |> State.set_phase(:play_or_discard, :choose_card_to_play)
-      |> choose_card(:personal_resources)
+      |> TerminalUi.choose_card(:personal_resources)
 
     state
     |> Phases.PlayOrDiscard.play_card(card)
@@ -34,7 +34,7 @@ defmodule TerminalUi.PlayOrDiscard do
 
     state
     |> State.set_phase(:play_or_discard, :choose_card_to_discard)
-    |> choose_card(:personal_resources)
+    |> TerminalUi.choose_card(:personal_resources)
     |> case do
       %{symbol: :key} = card ->
         Phases.PlayOrDiscard.discard_card(state, card) |> handle_prophecy(card)
@@ -47,7 +47,7 @@ defmodule TerminalUi.PlayOrDiscard do
   def handle_prophecy(%State{} = state, _card) do
     Prompt.display("Select prophecy card to discard:")
 
-    card = choose_card(state, :prophecy_pile)
+    card = TerminalUi.choose_card(state, :prophecy_pile)
 
     state
     |> Phases.PlayOrDiscard.remove_prophecy_card(card)
@@ -65,24 +65,10 @@ defmodule TerminalUi.PlayOrDiscard do
   def change_prophecy_pile_order(%State{} = state) do
     Prompt.display("Select next card to resolve prophecy:")
 
-    card = choose_card(state, :prophecy_pile)
+    card = TerminalUi.choose_card(state, :prophecy_pile)
 
     state
     |> Cards.move(:prophecy_pile, :prophecy_pile_new, card)
     |> change_prophecy_pile_order()
-  end
-
-  def choose_card(%State{} = state, cards_pile) do
-    pile = state |> Map.get(cards_pile)
-
-    selects =
-      pile
-      |> Enum.with_index()
-      |> Enum.map(fn {card, index} -> {TerminalUi.display_card(card), index} end)
-
-    Prompt.select("", selects)
-    |> case do
-      index -> Enum.at(pile, index)
-    end
   end
 end

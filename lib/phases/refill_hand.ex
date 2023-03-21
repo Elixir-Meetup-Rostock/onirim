@@ -39,28 +39,35 @@ defmodule Phases.RefillHand do
   end
 
   def open_drawn_door?(%State{} = state) do
-    key_card = Location.new(state.drawn_card.suit, :key)
+    key_card = get_matching_key(state.drawn_card)
 
-    has_key_card =
-      state
-      |> Cards.has(:pesonal_resources, key_card)
-
-    {has_key_card, key_card}
+    state
+    |> Cards.has(:pesonal_resources, key_card)
   end
 
   def open_drawn_door(%State{} = state) do
-    state
-    |> open_drawn_door?
-    |> case do
-      {true, key_card} ->
-        state
-        |> Cards.add(:opened_doors, state.drawn_card)
-        |> Cards.remove(:personal_resources, key_card)
-        |> Map.put(:drawn_card, nil)
+    key_card = get_matching_key(state.drawn_card)
 
-      _ ->
-        state
-    end
+    state
+    |> Cards.add(:opened_doors, state.drawn_card)
+    |> Cards.remove(:personal_resources, key_card)
+    |> Map.put(:drawn_card, nil)
+  end
+
+  def get_matching_key(%Door{} = card) do
+    Location.new(card.suit, :key)
+  end
+
+  def get_keys(%State{personal_resources: personal_resources}) do
+    personal_resources
+    |> Enum.filter(&(&1.symbol == :key))
+  end
+
+  def resolve_nightmare_with_key?(%State{} = state) do
+    state
+    |> get_keys()
+    |> Enum.count()
+    |> Kernel.>(0)
   end
 
   def resolve_nightmare_with_key(
@@ -70,6 +77,12 @@ defmodule Phases.RefillHand do
     state
     |> Cards.move(:personal_resources, :discard_pile, key)
     |> Cards.move_drawn_card(:discard_pile)
+  end
+
+  def resolve_nightmare_with_door?(%State{opened_doors: opened_doors}) do
+    opened_doors
+    |> Enum.count()
+    |> Kernel.>(0)
   end
 
   def resolve_nightmare_with_door(
@@ -103,12 +116,22 @@ defmodule Phases.RefillHand do
     final_state
   end
 
+  def resolve_nightmare_with_top_five_cards?(%State{draw_pile: draw_pile}) do
+    draw_pile
+    |> Enum.count()
+    |> Kernel.>=(5)
+  end
+
   def resolve_nightmare_with_personal_resources(
         %State{drawn_card: %Dream{type: :nightmare}} = state
       ) do
     state
     |> Cards.move(:personal_resources, :discard_pile)
     |> refill_personal_resources()
+  end
+
+  def resolve_nightmare_with_personal_resources?(%State{} = state) do
+    resolve_nightmare_with_top_five_cards?(state)
   end
 
   def refill_personal_resources(%State{} = state) do

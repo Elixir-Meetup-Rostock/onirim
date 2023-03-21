@@ -32,6 +32,24 @@ defmodule TerminalUi do
   #   state
   # end
 
+  def choose_card(%State{} = state, cards_pile) do
+    state
+    |> Map.get(cards_pile)
+    |> choose_card()
+  end
+
+  def choose_card(cards) do
+    selects =
+      cards
+      |> Enum.with_index()
+      |> Enum.map(fn {card, index} -> {TerminalUi.display_card(card), index} end)
+
+    Prompt.select("", selects)
+    |> case do
+      index -> Enum.at(cards, index)
+    end
+  end
+
   def handle_phases(%State{phase: :play_or_discard} = state),
     do: state |> TerminalUi.PlayOrDiscard.start()
 
