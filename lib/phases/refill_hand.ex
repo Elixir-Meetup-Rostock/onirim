@@ -42,7 +42,7 @@ defmodule Phases.RefillHand do
     key_card = get_matching_key(state.drawn_card)
 
     state
-    |> Cards.has(:pesonal_resources, key_card)
+    |> Cards.has(:personal_resources, key_card)
   end
 
   def open_drawn_door(%State{} = state) do

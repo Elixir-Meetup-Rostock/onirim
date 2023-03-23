@@ -9,9 +9,20 @@ defmodule TerminalUi.RefillHand do
     Prompt.display("Entered Phase 2 - Refill")
 
     state
+    |> draw_and_resolve()
+    |> State.set_phase(:shuffle_limbo, :start)
+  end
+
+  def draw_and_resolve(%State{personal_resources: personal_resources} = state)
+      when length(personal_resources) === 5 do
+    state
+  end
+
+  def draw_and_resolve(%State{} = state) do
+    state
     |> Phases.RefillHand.draw_card()
     |> resolve_drawn_card()
-    |> State.set_phase(:shuffle_limbo, :start)
+    |> draw_and_resolve()
   end
 
   def resolve_drawn_card(%State{drawn_card: %Location{} = card} = state) do
@@ -50,8 +61,7 @@ defmodule TerminalUi.RefillHand do
       false ->
         state
         |> Phases.RefillHand.resolve_drawn_door()
-        |> Phases.RefillHand.draw_card()
-        |> resolve_drawn_card()
+        |> draw_and_resolve()
     end
   end
 
@@ -96,8 +106,7 @@ defmodule TerminalUi.RefillHand do
       :no ->
         state
         |> Phases.RefillHand.resolve_drawn_door()
-        |> Phases.RefillHand.draw_card()
-        |> resolve_drawn_card()
+        |> draw_and_resolve()
 
       _ ->
         state
