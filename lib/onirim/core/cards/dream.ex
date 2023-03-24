@@ -1,4 +1,4 @@
-defmodule Cards.Dream do
+defmodule Onirim.Core.Cards.Dream do
   defstruct type: :unknown
 
   @types [:nightmare]

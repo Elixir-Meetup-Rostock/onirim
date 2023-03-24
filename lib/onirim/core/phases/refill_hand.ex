@@ -1,7 +1,9 @@
-defmodule Phases.RefillHand do
-  alias Cards.Door
-  alias Cards.Dream
-  alias Cards.Location
+defmodule Onirim.Core.Phases.RefillHand do
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Cards.Location
+  alias Onirim.State
 
   @personal_ressources_limit Application.compile_env(:onirim, :personal_ressources_limit)
 

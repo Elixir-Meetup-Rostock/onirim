@@ -1,7 +1,9 @@
-defmodule Cards do
-  alias Cards.Door
-  alias Cards.Dream
-  alias Cards.Location
+defmodule Onirim.Core.Cards do
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Cards.Location
+  alias Onirim.State
 
   def add_cards(cards, card, count \\ 1)
   def add_cards(cards, card, 1), do: [card | cards]

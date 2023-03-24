@@ -1,4 +1,6 @@
-defmodule Phases.ShuffleLimbo do
+defmodule Onirim.Core.Phases.ShuffleLimbo do
+  alias Onirim.State
+
   def resolve_limbo(%State{} = state) do
     if Enum.empty?(state.limbo_pile) do
       state

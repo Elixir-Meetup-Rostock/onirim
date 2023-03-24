@@ -1,7 +1,9 @@
 defmodule TerminalUi.RefillHand do
-  alias Cards.Door
-  alias Cards.Location
-  alias Cards.Dream
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Location
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Phases
+  alias Onirim.State
 
   # TODO Add Subphase Handling
 
