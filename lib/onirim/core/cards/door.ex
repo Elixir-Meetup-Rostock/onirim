@@ -1,4 +1,4 @@
-defmodule Cards.Door do
+defmodule Onirim.Core.Cards.Door do
   defstruct suit: :unknown
 
   require Constants

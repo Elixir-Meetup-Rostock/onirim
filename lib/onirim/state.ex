@@ -1,4 +1,4 @@
-defmodule State do
+defmodule Onirim.State do
   defstruct draw_pile: [],
             discard_pile: [],
             drawn_card: nil,
@@ -12,7 +12,7 @@ defmodule State do
             prophecy_pile_new: [],
             status: :unknown
 
-  def set_phase(%State{} = state, phase, sub_phase) do
+  def set_phase(%__MODULE__{} = state, phase, sub_phase) do
     state
     |> Map.put(:phase, phase)
     |> Map.put(:sub_phase, sub_phase)

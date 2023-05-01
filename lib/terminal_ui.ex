@@ -1,36 +1,9 @@
 defmodule TerminalUi do
-  alias Cards.Door
-  alias Cards.Dream
-  alias Cards.Location
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Cards.Location
+  alias Onirim.State
   alias Prompt
-  alias State
-
-  # @info_actions [
-  #   {"Show personal resources", :personal_resources},
-  #   {"Show discard pile", :discard_pile},
-  #   {"Show limbo pile", :limbo_pile},
-  #   {"Show labyrinth", :labyrinth},
-  #   {"Show draw pile", :draw_pile},
-  #   {"Show state", :state}
-  # ]
-
-  # def basic_actions(%State{} = state) do
-  #   next_action = get_next_actions(state)
-
-  #   Prompt.select("Choose an action", @info_actions ++ next_action)
-  #   |> case do
-  #     :state ->
-  #       state
-  #       |> IO.inspect(label: "State: ")
-
-  #     cards_key ->
-  #       state
-  #       |> Map.get(cards_key)
-  #       |> display_cards()
-  #   end
-
-  #   state
-  # end
 
   def choose_card(%State{} = state, cards_pile) do
     state
@@ -50,15 +23,6 @@ defmodule TerminalUi do
     end
   end
 
-  def handle_phases(%State{phase: :play_or_discard} = state),
-    do: state |> TerminalUi.PlayOrDiscard.start()
-
-  def handle_phases(%State{phase: :refill_hand} = state),
-    do: state |> TerminalUi.RefillHand.start()
-
-  def handle_phases(%State{phase: :shuffle_limbo} = state),
-    do: state |> TerminalUi.ShuffleLimbo.start()
-
   def display_cards(cards) do
     cards
     |> Enum.map(&display_card/1)
@@ -70,4 +34,8 @@ defmodule TerminalUi do
   def display_card(%Dream{type: type}), do: "Dream - #{type}"
 
   def display_card(%Door{suit: suit}), do: "Door - #{suit}"
+
+  def start do
+    TerminalUi.Game.run()
+  end
 end

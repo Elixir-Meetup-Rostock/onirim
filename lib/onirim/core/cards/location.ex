@@ -1,4 +1,4 @@
-defmodule Cards.Location do
+defmodule Onirim.Core.Cards.Location do
   defstruct suit: :unknown, symbol: :unkown
 
   require Constants

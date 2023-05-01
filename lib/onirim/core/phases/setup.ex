@@ -1,7 +1,10 @@
-defmodule Phases.Setup do
-  alias Cards.Door
-  alias Cards.Dream
-  alias Cards.Location
+defmodule Onirim.Core.Phases.Setup do
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Cards.Location
+  alias Onirim.Core.Phases
+  alias Onirim.State
 
   @default_draw_pile_input Application.compile_env(:onirim, :default_draw_pile)
 

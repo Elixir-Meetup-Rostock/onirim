@@ -1,4 +1,8 @@
 defmodule TerminalUi.PlayOrDiscard do
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Phases
+  alias Onirim.State
+
   def start(%State{} = state) do
     Prompt.display("Entered Phase 1 - Play or Discard")
 

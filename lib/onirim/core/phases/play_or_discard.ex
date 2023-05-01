@@ -1,7 +1,9 @@
-defmodule Phases.PlayOrDiscard do
-  alias Cards
-  alias Cards.Door
-  alias Cards.Location
+defmodule Onirim.Core.Phases.PlayOrDiscard do
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Location
+  alias Onirim.State
 
   def discard_card(%State{} = state, %Location{symbol: :key} = card) do
     state
