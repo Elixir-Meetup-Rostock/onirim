@@ -1,9 +1,15 @@
 defmodule Cards.Door do
   defstruct suit: :unknown
 
-  @suits Application.compile_env(:onirim, :suits)
+  require Constants
 
-  def new(suit) when suit in @suits do
+  def new(suit) when suit in Constants.suits() do
     %__MODULE__{suit: suit}
+  end
+
+  def random do
+    Constants.suits()
+    |> Enum.random()
+    |> new()
   end
 end

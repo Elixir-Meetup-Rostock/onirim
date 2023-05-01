@@ -51,6 +51,21 @@ defmodule Cards do
     |> Map.put(from_pile, card_pile |> tl())
   end
 
+  def random do
+    1..3
+    |> Enum.random()
+    |> case do
+      1 ->
+        Cards.Door.random()
+
+      2 ->
+        Cards.Dream.random()
+
+      _ ->
+        Cards.Location.random()
+    end
+  end
+
   def shuffle(%State{} = state, pile) do
     Map.update!(state, pile, &Enum.shuffle/1)
   end

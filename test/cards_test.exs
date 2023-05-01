@@ -1,35 +1,88 @@
 defmodule CardsTest do
-  alias Cards.Door
-  alias Cards.Dream
-  alias Cards.Location
-
   use ExUnit.Case
 
-  test "Create door card (aquarium)" do
-    assert Cards.Door.new(:aquarium) == %Door{suit: :aquarium}
+  test "Add multiple cards and check count" do
+    cards = get_random_pile(20)
+
+    cards_added = Cards.add_cards(cards, Cards.Door.random(), 5)
+
+    assert Enum.count(cards_added) === 25
   end
 
-  test "Create dream card (nightmare)" do
-    assert Cards.Dream.new(:nightmare) == %Dream{type: :nightmare}
+  test "Add Card and check first card" do
+    cards = get_random_pile(20)
+
+    cards_added = Cards.add_cards(cards, Cards.Door.new(:garden))
+
+    assert List.first(cards_added) === Cards.Door.new(:garden)
   end
 
-  test "Create location card (aquarium key)" do
-    assert Cards.Location.new(:aquarium, :key) == %Location{suit: :aquarium, symbol: :key}
+  test "Add card to pile" do
+    result =
+      %State{}
+      |> Cards.add(:draw_pile, Cards.Dream.new(:nightmare))
+      |> Cards.has(:draw_pile, Cards.Dream.new(:nightmare))
+
+    assert true == result
+  end
+
+  test "Add card to pile and check position" do
+    result =
+      %State{}
+      |> Cards.add(:draw_pile, Cards.Dream.new(:nightmare))
+      |> Map.get(:draw_pile)
+      |> List.first()
+
+    assert Cards.Dream.new(:nightmare) == result
+  end
+
+  test "Has card in pile" do
+    state = %State{draw_pile: [Cards.Dream.new(:nightmare)]}
+
+    result =
+      state
+      |> Map.get(:draw_pile)
+      |> Enum.member?(Cards.Dream.new(:nightmare))
+
+    assert true == result
+  end
+
+  test "Shuffle draw pile" do
+    {original_pile, shuffled_pile} = get_original_and_shuffled_pile(:draw_pile, 1000)
+
+    refute original_pile == shuffled_pile
+  end
+
+  test "Shuffle discard pile" do
+    {original_pile, shuffled_pile} = get_original_and_shuffled_pile(:discard_pile, 1000)
+
+    refute original_pile == shuffled_pile
+  end
+
+  test "Shuffle personal resources" do
+    {original_pile, shuffled_pile} = get_original_and_shuffled_pile(:personal_resources, 1000)
+
+    refute original_pile == shuffled_pile
   end
 
   # TODO Weniger Heisentestig
-  test "Shuffle pile" do
-    state = Phases.Setup.default_setup()
+  def get_random_pile(count) do
+    for _ <- 1..count, do: Cards.random()
+  end
 
-    pile_a =
+  def get_original_and_shuffled_pile(pile, count) do
+    random_pile = get_random_pile(count)
+    state = %State{} |> Map.put(pile, random_pile)
+
+    original_pile =
       state
-      |> Map.get(:draw_pile)
+      |> Map.get(pile)
 
-    pile_b =
+    shuffled_pile =
       state
-      |> Cards.shuffle(:draw_pile)
-      |> Map.get(:draw_pile)
+      |> Cards.shuffle(pile)
+      |> Map.get(pile)
 
-    refute pile_a == pile_b
+    {original_pile, shuffled_pile}
   end
 end

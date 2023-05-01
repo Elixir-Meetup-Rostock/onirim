@@ -3,7 +3,6 @@ import Config
 config :onirim,
   cards: [:dream, :door, :location],
   phases: [:setup, :play_or_discard, :refill_hand, :shuffle_limbo],
-  suits: [:aquarium, :garden, :library, :observatory],
   status: [:victory, :defeat, :active],
   symbols: [:key, :moon, :sun],
   personal_ressources_limit: 5,
