@@ -1,4 +1,7 @@
 defmodule CardsTest do
+  alias Onirim.Core.Cards
+  alias Onirim.State
+
   use ExUnit.Case
 
   test "Add multiple cards and check count" do
@@ -45,6 +48,36 @@ defmodule CardsTest do
       |> Enum.member?(Cards.Dream.new(:nightmare))
 
     assert true == result
+  end
+
+  test "Test empty from_pile after moving a whole pile" do
+    result =
+      %State{
+        draw_pile: get_random_pile(10),
+        discard_pile: get_random_pile(10)
+      }
+      |> Cards.move(:draw_pile, :discard_pile)
+      |> Map.get(:draw_pile)
+      |> Kernel.==([])
+
+    assert true == result
+  end
+
+  test "Check new pile after moving a pile" do
+    draw_pile = get_random_pile(1)
+    discard_pile = get_random_pile(1)
+
+    new_check_pile = draw_pile ++ discard_pile
+
+    new_discard_pile =
+      %State{
+        draw_pile: draw_pile,
+        discard_pile: discard_pile
+      }
+      |> Cards.move(:draw_pile, :discard_pile)
+      |> Map.get(:discard_pile)
+
+    assert new_check_pile == new_discard_pile
   end
 
   test "Shuffle draw pile" do

@@ -1,10 +1,11 @@
 defmodule DeckTest do
   use ExUnit.Case
 
-  alias Cards.Dream
-  alias Cards.Door
-  alias Cards.Location
-  alias Phases.Setup
+  alias Onirim.Core.Cards
+  alias Onirim.Core.Cards.Door
+  alias Onirim.Core.Cards.Dream
+  alias Onirim.Core.Cards.Location
+  alias Onirim.Core.Phases.Setup
 
   def get_default_draw_pile do
     []

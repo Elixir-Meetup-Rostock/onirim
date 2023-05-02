@@ -1,10 +1,10 @@
 defmodule LocationTest do
-  alias Cards.Location
+  alias Onirim.Core.Cards.Location
 
   use ExUnit.Case
 
   test "Create location card (aquarium key)" do
-    assert Cards.Location.new(:aquarium, :key) == %Location{suit: :aquarium, symbol: :key}
+    assert Location.new(:aquarium, :key) == %Location{suit: :aquarium, symbol: :key}
   end
 
   test "Create random location card" do

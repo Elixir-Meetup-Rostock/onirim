@@ -1,5 +1,5 @@
 defmodule DoorTest do
-  alias Cards.Door
+  alias Onirim.Core.Cards.Door
 
   use ExUnit.Case
 
