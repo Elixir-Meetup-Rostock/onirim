@@ -14,10 +14,8 @@ defmodule Onirim.Core.Phases.RefillHand do
   end
 
   def discard_personal_resources(%State{} = state) do
-    state.personal_resources
-    |> Enum.map(&Cards.move(state, :personal_resources, :discard_pile, &1))
-
     state
+    |> Cards.move(:personal_resources, :discard_pile)
   end
 
   def draw_card(%State{} = state) do
@@ -97,25 +95,27 @@ defmodule Onirim.Core.Phases.RefillHand do
   end
 
   def resolve_nightmare_with_top_five_cards(%State{drawn_card: %Dream{type: :nightmare}} = state) do
-    {final_state, _} =
-      state.draw_pile
-      |> Enum.reduce_while({state, 0}, fn card, {current_state, counter} ->
-        if counter < 5 do
-          case card do
-            %Location{} ->
-              new_state = Cards.move_top_card(current_state, :draw_pile, :discard_pile)
-              {:cont, {new_state, counter + 1}}
+    state.draw_pile
+    |> Enum.reduce_while({state, 0}, fn card, {current_state, counter} ->
+      reduce_draw_pile(card, {current_state, counter})
+    end)
+    |> Kernel.elem(0)
+  end
 
-            _ ->
-              new_state = Cards.move_top_card(current_state, :draw_pile, :limbo_pile)
-              {:cont, {new_state, counter + 1}}
-          end
-        else
-          {:halt, {current_state, counter}}
-        end
-      end)
+  def reduce_draw_pile(card, {current_state, counter}) do
+    if counter < 5 do
+      case card do
+        %Location{} ->
+          new_state = Cards.move_top_card(current_state, :draw_pile, :discard_pile)
+          {:cont, {new_state, counter + 1}}
 
-    final_state
+        _ ->
+          new_state = Cards.move_top_card(current_state, :draw_pile, :limbo_pile)
+          {:cont, {new_state, counter + 1}}
+      end
+    else
+      {:halt, {current_state, counter}}
+    end
   end
 
   def resolve_nightmare_with_top_five_cards?(%State{draw_pile: draw_pile}) do
@@ -138,20 +138,22 @@ defmodule Onirim.Core.Phases.RefillHand do
 
   def refill_personal_resources(%State{} = state) do
     state.draw_pile
-    |> Enum.reduce_while(state, fn card, state ->
-      if Enum.count(state.personal_resources) < @personal_ressources_limit do
-        case card do
-          %Location{} ->
-            new_state = Cards.move_top_card(state, :draw_pile, :personal_resources)
-            {:cont, new_state}
+    |> Enum.reduce_while(state, fn card, state -> reduce_draw_pile(card, state) end)
+  end
 
-          _ ->
-            new_state = Cards.move_top_card(state, :draw_pile, :limbo_pile)
-            {:cont, new_state}
-        end
-      else
-        {:halt, state}
+  def reduce_draw_pile(card, state) do
+    if Enum.count(state.personal_resources) < @personal_ressources_limit do
+      case card do
+        %Location{} ->
+          new_state = Cards.move_top_card(state, :draw_pile, :personal_resources)
+          {:cont, new_state}
+
+        _ ->
+          new_state = Cards.move_top_card(state, :draw_pile, :limbo_pile)
+          {:cont, new_state}
       end
-    end)
+    else
+      {:halt, state}
+    end
   end
 end

@@ -15,8 +15,7 @@ defmodule Onirim.Core do
 
     remaining_locations_count =
       state.draw_pile
-      |> Enum.filter(&Cards.location?/1)
-      |> Enum.count()
+      |> Enum.count(&Cards.location?/1)
 
     if personal_resources_count + remaining_locations_count < 5 do
       Map.put(state, :status, :defeat)

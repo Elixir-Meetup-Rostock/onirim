@@ -21,6 +21,7 @@ defmodule Onirim.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:prompt, "~> 0.8.0"}
       # {:enum_type, "~> 1.1.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},

@@ -59,7 +59,7 @@ defmodule TerminalUi.PlayOrDiscard do
   end
 
   def change_prophecy_pile_order(%State{prophecy_pile: prophecy_pile} = state)
-      when length(prophecy_pile) === 0 do
+      when prophecy_pile == [] do
     Prompt.display("Prophecy sorting done.")
 
     state
